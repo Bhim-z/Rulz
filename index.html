@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Game Hub - Team 3Xploit.id</title>
+    <style>
+        /* CSS Dasar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        /* --- Gaya Autentikasi --- */
+        #authScreen {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            margin: auto;
+        }
+
+        #authScreen h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .auth-btn:hover {
+            background: #5568d3;
+        }
+
+        .switch-auth {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .switch-auth a {
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #f44336;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        /* --- Gaya Game Hub --- */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            flex: 1;
+        }
+
+        .user-info {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            color: #667eea;
+        }
+
+        .coin-display {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1em;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .game-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .game-card .icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .game-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .game-area.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-size: 1em;
+        }
+
+        .back-btn:hover {
+            background: #5568d3;
+        }
+
+        .game-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .quiz-container {
+            text-align: center;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .option-btn {
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #e0e0e0;
+            transform: scale(1.05);
+        }
+
+        .option-btn.correct {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+
+        .option-btn.wrong {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 1.5em;
+            margin: 20px 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .next-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .next-btn:hover {
+            background: #5568d3;
+        }
+        
+        /* Gaya Khusus UNO dan Memory Card */
+        /* ... (Gaya UNO dan Memory tetap dari kode Anda) */
+        .card-pile {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .card {
+            width: 100px;
+            height: 140px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card.red { background: #e74c3c; color: white; }
+        .card.blue { background: #3498db; color: white; }
+        .card.green { background: #2ecc71; color: white; }
+        .card.yellow { background: #f1c40f; color: white; }
+
+        .player-hand {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .player-hand .card {
+            width: 80px;
+            height: 110px;
+            font-size: 1.5em;
+        }
+
+        .uno-info {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            color: white;
+            transition: transform 0.3s;
+        }
+
+        .memory-card:hover:not(.matched) {
+            transform: scale(1.05);
+        }
+
+        .memory-card.flipped {
+            background: white;
+            border: 3px solid #667eea;
+        }
+
+        .memory-card.matched {
+            background: #4caf50;
+            cursor: default;
+        }
+
+        .game-stats {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+        /* Responsif */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="authScreen">
+        <div id="loginForm">
+            <h2> Selamat Datang!</h2>
+            <p class="error-message" id="loginError"></p>
+            <input type="text" id="loginUsername" class="auth-input" placeholder="Username" required>
+            <input type="password" id="loginPassword" class="auth-input" placeholder="Password" required>
+            <button class="auth-btn" onclick="handleLogin()">Login</button>
+            <p class="switch-auth">Belum punya akun? <a onclick="showRegister()">Daftar di sini</a></p>
+        </div>
+
+        <div id="registerForm" style="display: none;">
+            <h2> Daftar Akun Baru</h2>
+            <p class="error-message" id="registerError"></p>
+            <input type="text" id="registerUsername" class="auth-input" placeholder="Username Baru" required>
+            <input type="password" id="registerPassword" class="auth-input" placeholder="Password (min 6 karakter)" required>
+            <button class="auth-btn" onclick="handleRegister()">Daftar</button>
+            <p class="switch-auth">Sudah punya akun? <a onclick="showLogin()">Login di sini</a></p>
+        </div>
+    </div>
+
+    <div class="container" id="gameHub" style="display: none;">
+        <div class="header">
+            <h1>🎮 Mini Game Hub 🎮</h1>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span id="usernameDisplay">User</span>
+                <div class="coin-display">
+                    <span id="coinDisplay">0</span>
+                    <span style="color: gold;">🌕</span> </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div id="menu" class="game-menu">
+            <div class="game-card" onclick="startGame('kuliner')">
+                <div class="icon">🍜</div>
+                <h3>Tebak Kuliner</h3>
+                <p>Tebak nama makanan Indonesia (+10 Poin/benar)</p>
+            </div>
+            <div class="game-card" onclick="startGame('daerah')">
+                <div class="icon">🗺️</div>
+                <h3>Tebak Daerah</h3>
+                <p>Kenali daerah di Indonesia (+10 Poin/benar)</p>
+            </div>
+            <div class="game-card" onclick="startGame('zodiak')">
+                <div class="icon">⭐</div>
+                <h3>Tebak Zodiak</h3>
+                <p>Tebak zodiak berdasarkan tanggal (+10 Poin/benar)</p>
+            </div>
+            <div class="game-card" onclick="startGame('uno')">
+                <div class="icon">🂴</div>
+                <h3>UNO Game</h3>
+                <p>Main kartu UNO</p>
+            </div>
+            <div class="game-card" onclick="startGame('memory')">
+                <div class="icon">🃏</div>
+                <h3>Tebak Kartu</h3>
+                <p>Cocokkan kartu yang sama</p>
+            </div>
+        </div>
+
+        <div id="gameArea" class="game-area">
+            <button class="back-btn" onclick="backToMenu()">← Kembali</button>
+            <div id="gameContent" class="game-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIC AUTENTIKASI DAN LOCAL STORAGE ---
+        
+        const COIN_PER_CORRECT_ANSWER = 10;
+        let currentUser = null;
+
+        function getUsers() {
+            const users = localStorage.getItem('gameUsers');
+            return users ? JSON.parse(users) : {};
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('gameUsers', JSON.stringify(users));
+        }
+
+        function getCurrentUser() {
+            const user = localStorage.getItem('currentUser');
+            return user ? JSON.parse(user) : null;
+        }
+
+        function saveCurrentUser(user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+        }
+
+        function updateCoinDisplay(coins) {
+            document.getElementById('coinDisplay').textContent = coins;
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('loginError').textContent = '';
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('registerError').textContent = '';
+        }
+
+        function handleRegister() {
+            const username = document.getElementById('registerUsername').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const errorElement = document.getElementById('registerError');
+
+            errorElement.textContent = '';
+
+            if (username.length < 3 || password.length < 6) {
+                errorElement.textContent = 'Username min 3 karakter, Password min 6 karakter.';
+                return;
+            }
+
+            const users = getUsers();
+            if (users[username]) {
+                errorElement.textContent = 'Username sudah terdaftar.';
+                return;
+            }
+
+            // Simpan pengguna baru dengan koin awal 0
+            users[username] = { username: username, password: password, coins: 0 };
+            saveUsers(users);
+            
+            errorElement.textContent = 'Pendaftaran berhasil! Silakan login.';
+            errorElement.style.color = '#4caf50';
+            setTimeout(showLogin, 1500);
+        }
+
+        function handleLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorElement = document.getElementById('loginError');
+
+            errorElement.textContent = '';
+            
+            const users = getUsers();
+            const user = users[username];
+
+            if (user && user.password === password) {
+                currentUser = user;
+                saveCurrentUser(currentUser);
+                initGameHub();
+            } else {
+                errorElement.textContent = 'Username atau password salah.';
+            }
+        }
+
+        function logout() {
+            // Simpan data koin terakhir sebelum logout
+            if (currentUser) {
+                const users = getUsers();
+                users[currentUser.username] = currentUser;
+                saveUsers(users);
+            }
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            document.getElementById('gameHub').style.display = 'none';
+            document.getElementById('authScreen').style.display = 'block';
+            // Reset input form
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            showLogin();
+        }
+
+        function initGameHub() {
+            if (currentUser) {
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('gameHub').style.display = 'block';
+                document.getElementById('usernameDisplay').textContent = currentUser.username;
+                document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+                updateCoinDisplay(currentUser.coins);
+            } else {
+                document.getElementById('gameHub').style.display = 'none';
+                document.getElementById('authScreen').style.display = 'block';
+            }
+        }
+
+        // Jalankan saat memuat halaman
+        window.onload = () => {
+            currentUser = getCurrentUser();
+            initGameHub();
+        };
+
+        // --- DATA GAME ---
+        let currentGame = '';
+        let score = 0;
+        let currentQuestion = 0;
+
+        const kulinerData = [
+            { img: '🍜', name: 'Soto', options: ['Soto', 'Bakso', 'Mie Ayam', 'Gado-gado'] },
+            { img: '🍛', name: 'Rendang', options: ['Rendang', 'Gulai', 'Opor', 'Semur'] },
+            { img: '🥢', name: 'Sate', options: ['Sate', 'Bakso', 'Siomay', 'Empek-empek'] },
+            { img: '🥘', name: 'Nasi Goreng', options: ['Nasi Goreng', 'Mie Goreng', 'Kwetiau', 'Bihun'] },
+            { img: '🍲', name: 'Rawon', options: ['Rawon', 'Soto', 'Gulai', 'Tongseng'] },
+            { img: '🥟', name: 'Siomay', options: ['Siomay', 'Lumpia', 'Perkedel', 'Tahu Goreng'] },
+            { img: '🍱', name: 'Nasi Kuning', options: ['Nasi Kuning', 'Nasi Putih', 'Nasi Merah', 'Nasi Hitam'] },
+            { img: '🍚', name: 'Tumpeng', options: ['Tumpeng', 'Lemper', 'Soto Ayam', 'Gudeg'] },
+            { img: '🥗', name: 'Gado-gado', options: ['Gado-gado', 'Lumpia', 'Karedok', 'Pecel'] },
+            { img: '🍝', name: 'Bakmi Jawa', options: ['Bakmi Jawa', 'Mi Goreng', 'Ramen', 'Mie Ayam'] }
+        ];
+
+        const daerahData = [
+            { name: 'Bali', hint: 'Pulau Dewata', options: ['Bali', 'Lombok', 'Flores', 'Sumba'] },
+            { name: 'Jakarta', hint: 'Ibu kota Indonesia', options: ['Jakarta', 'Bandung', 'Surabaya', 'Medan'] },
+            { name: 'Yogyakarta', hint: 'Kota Pelajar', options: ['Yogyakarta', 'Solo', 'Semarang', 'Malang'] },
+            { name: 'Papua', hint: 'Provinsi paling timur', options: ['Papua', 'Maluku', 'Sulawesi', 'Kalimantan'] },
+            { name: 'Aceh', hint: 'Serambi Mekkah', options: ['Aceh', 'Medan', 'Padang', 'Palembang'] },
+            { name: 'Surabaya', hint: 'Kota Pahlawan', options: ['Surabaya', 'Malang', 'Pasuruan', 'Gresik'] },
+            { name: 'Bandung', hint: 'Kota Bunga', options: ['Bandung', 'Bogor', 'Depok', 'Bekasi'] },
+            { name: 'Lombok', hint: 'Pulau Seribu Masjid', options: ['Lombok', 'Bali', 'Flores', 'Sumbawa'] },
+            { name: 'Maluku', hint: 'Kepulauan Rempah', options: ['Maluku', 'Papua', 'Sulawesi', 'Nusa Tenggara'] },
+            { name: 'Kalimantan', hint: 'Pulau terbesar ketiga', options: ['Kalimantan', 'Sumatra', 'Sulawesi', 'Papua'] }
+        ];
+
+        const zodiakData = [
+            { zodiak: 'Aries', tanggal: '21 Maret - 19 April', simbol: '♈', options: ['Aries', 'Taurus', 'Gemini', 'Cancer'] },
+            { zodiak: 'Taurus', tanggal: '20 April - 20 Mei', simbol: '♉', options: ['Taurus', 'Aries', 'Gemini', 'Leo'] },
+            { zodiak: 'Gemini', tanggal: '21 Mei - 20 Juni', simbol: '♊', options: ['Gemini', 'Cancer', 'Leo', 'Virgo'] },
+            { zodiak: 'Cancer', tanggal: '21 Juni - 22 Juli', simbol: '♋', options: ['Cancer', 'Leo', 'Virgo', 'Libra'] },
+            { zodiak: 'Leo', tanggal: '23 Juli - 22 Agustus', simbol: '♌', options: ['Leo', 'Virgo', 'Libra', 'Scorpio'] },
+            { zodiak: 'Virgo', tanggal: '23 Agustus - 22 September', simbol: '♍', options: ['Virgo', 'Libra', 'Scorpio', 'Sagitarius'] },
+            { zodiak: 'Libra', tanggal: '23 September - 22 Oktober', simbol: '♎', options: ['Libra', 'Scorpio', 'Sagitarius', 'Capricorn'] },
+            { zodiak: 'Scorpio', tanggal: '23 Oktober - 21 November', simbol: '♏', options: ['Scorpio', 'Sagitarius', 'Capricorn', 'Aquarius'] },
+            { zodiak: 'Sagitarius', tanggal: '22 November - 21 Desember', simbol: '♐', options: ['Sagitarius', 'Capricorn', 'Aquarius', 'Pisces'] },
+            { zodiak: 'Capricorn', tanggal: '22 Desember - 19 Januari', simbol: '♑', options: ['Capricorn', 'Aquarius', 'Pisces', 'Aries'] }
+        ];
+
+        // --- LOGIC GAME UTAMA ---
+
+        function startGame(game) {
+            if (!currentUser) {
+                alert('Anda harus Login untuk memulai permainan dan menyimpan poin!');
+                return;
+            }
+            currentGame = game;
+            score = 0;
+            currentQuestion = 0;
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('gameArea').classList.add('active');
+            
+            if (game === 'kuliner') loadKulinerQuiz();
+            else if (game === 'daerah') loadDaerahQuiz();
+            else if (game === 'zodiak') loadZodiakQuiz();
+            else if (game === 'uno') loadUnoGame();
+            else if (game === 'memory') loadMemoryGame();
+        }
+
+        function backToMenu() {
+            document.getElementById('menu').style.display = 'grid';
+            document.getElementById('gameArea').classList.remove('active');
+            // Pastikan data koin di header terupdate setelah kembali dari game
+            if (currentUser) {
+                updateCoinDisplay(currentUser.coins);
+            }
+        }
+
+        function loadKulinerQuiz() {
+            const content = document.getElementById('gameContent');
+            const data = kulinerData[currentQuestion];
+            if (!data) return showFinalScore('quiz');
+            const shuffledOptions = [...data.options].sort(() => Math.random() - 0.5);
+            
+            content.innerHTML = `
+                <h2>🍜 Tebak Kuliner Indonesia</h2>
+                <div class="score">Skor: ${score} | Soal: ${currentQuestion + 1}/${kulinerData.length}</div>
+                <div class="quiz-container">
+                    <div style="font-size: 150px;">${data.img}</div>
+                    <h3>Apa nama makanan ini?</h3>
+                    <div class="options">
+                        ${shuffledOptions.map(opt => `<button class="option-btn" onclick="checkAnswer('${opt}', '${data.name}', 'kuliner')">${opt}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadDaerahQuiz() {
+            const content = document.getElementById('gameContent');
+            const data = daerahData[currentQuestion];
+            if (!data) return showFinalScore('quiz');
+            const shuffledOptions = [...data.options].sort(() => Math.random() - 0.5);
+            
+            content.innerHTML = `
+                <h2>🗺️ Tebak Daerah Indonesia</h2>
+                <div class="score">Skor: ${score} | Soal: ${currentQuestion + 1}/${daerahData.length}</div>
+                <div class="quiz-container">
+                    <h3>Petunjuk: ${data.hint}</h3>
+                    <div class="options">
+                        ${shuffledOptions.map(opt => `<button class="option-btn" onclick="checkAnswer('${opt}', '${data.name}', 'daerah')">${opt}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadZodiakQuiz() {
+            const content = document.getElementById('gameContent');
+            const data = zodiakData[currentQuestion];
+            if (!data) return showFinalScore('quiz');
+            const shuffledOptions = [...data.options].sort(() => Math.random() - 0.5);
+            
+            content.innerHTML = `
+                <h2>⭐ Tebak Zodiak</h2>
+                <div class="score">Skor: ${score} | Soal: ${currentQuestion + 1}/${zodiakData.length}</div>
+                <div class="quiz-container">
+                    <div style="font-size: 100px;">${data.simbol}</div>
+                    <h3>Zodiak apa yang lahir pada: ${data.tanggal}?</h3>
+                    <div class="options">
+                        ${shuffledOptions.map(opt => `<button class="option-btn" onclick="checkAnswer('${opt}', '${data.zodiak}', 'zodiak')">${opt}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkAnswer(selected, correct, gameType) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correct) {
+                    btn.classList.add('correct');
+                }
+                if (btn.textContent === selected && selected !== correct) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            if (selected === correct) {
+                score += COIN_PER_CORRECT_ANSWER;
+            }
+            
+            setTimeout(() => {
+                currentQuestion++;
+                const dataLength = gameType === 'kuliner' ? kulinerData.length : 
+                                 gameType === 'daerah' ? daerahData.length : zodiakData.length;
+                
+                if (currentQuestion < dataLength) {
+                    if (gameType === 'kuliner') loadKulinerQuiz();
+                    else if (gameType === 'daerah') loadDaerahQuiz();
+                    else if (gameType === 'zodiak') loadZodiakQuiz();
+                } else {
+                    showFinalScore('quiz');
+                }
+            }, 1500);
+        }
+
+        function showFinalScore(type) {
+            const content = document.getElementById('gameContent');
+            
+            if (type === 'quiz') {
+                // Tambahkan koin ke Local Storage
+                if (currentUser) {
+                    currentUser.coins += score;
+                    saveCurrentUser(currentUser);
+                    const users = getUsers();
+                    users[currentUser.username] = currentUser;
+                    saveUsers(users);
+                }
+
+                content.innerHTML = `
+                    <div style="text-align: center;">
+                        <h2>🎉 Permainan Selesai! 🎉</h2>
+                        <div class="score">Skor Akhir: ${score}</div>
+                        ${currentUser ? `<div class="score" style="color: green;">Anda mendapat +${score} âš¡ Poin!</div>` : ''}
+                        <button class="next-btn" onclick="backToMenu()">Kembali ke Menu</button>
+                    </div>
+                `;
+            } 
+            // Tambahkan logika lain untuk UNO/Memory jika diperlukan
+        }
+
+        // --- UNO GAME (Minimalis) ---
+        let deck = [];
+        let playerHand = [];
+        let currentCard = null;
+        let unoScore = 0;
+
+        function loadUnoGame() {
+            initUnoGame();
+            renderUnoGame();
+        }
+
+        function initUnoGame() {
+            deck = [];
+            const colors = ['red', 'blue', 'green', 'yellow'];
+            const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            
+            colors.forEach(color => {
+                numbers.forEach(num => {
+                    deck.push({ color, value: num });
+                });
+            });
+            
+            deck = deck.sort(() => Math.random() - 0.5);
+            playerHand = deck.splice(0, 7);
+            currentCard = deck.pop();
+            unoScore = 0;
+        }
+
+        function renderUnoGame() {
+            const content = document.getElementById('gameContent');
+            content.innerHTML = `
+                <h2>🂴 UNO Game</h2>
+                <div class="uno-info">
+                    <p>Skor: ${unoScore} | Kartu tersisa: ${playerHand.length}</p>
+                    <p>Cocokkan warna atau angka!</p>
+                </div>
+                <div class="card-pile">
+                    <div class="card ${currentCard.color}">
+                        ${currentCard.value}
+                    </div>
+                </div>
+                <h3 style="text-align: center; margin: 20px 0;">Kartu Anda:</h3>
+                <div class="player-hand">
+                    ${playerHand.map((card, idx) => `
+                        <div class="card ${card.color}" onclick="playUnoCard(${idx})">
+                            ${card.value}
+                        </div>
+                    `).join('')}
+                </div>
+                <button class="next-btn" onclick="backToMenu()">Kembali ke Menu</button>
+            `;
+        }
+
+        function playUnoCard(idx) {
+            const card = playerHand[idx];
+            if (card.color === currentCard.color || card.value === currentCard.value) {
+                currentCard = card;
+                playerHand.splice(idx, 1);
+                unoScore += 5;
+                renderUnoGame();
+            }
+        }
+        
+        // --- MEMORY GAME ---
+        let flipped = [];
+        let matched = [];
+        let emojis = ['🍎', '🍎', '🍊', '🍊', '🍋', '🍋', '🍌', '🍌', '🍉', '🍉', '🍓', '🍓', '🍒', '🍒', '🥝', '🥝'];
+        let moves = 0;
+
+        function loadMemoryGame() {
+            flipped = [];
+            matched = [];
+            moves = 0;
+            // Acak kartu
+            emojis = emojis.sort(() => Math.random() - 0.5);
+            renderMemoryGame();
+        }
+
+        function renderMemoryGame() {
+            const content = document.getElementById('gameContent');
+            content.innerHTML = `
+                <h2>🃏 Memory Cards</h2>
+                <div class="game-stats">
+                    <p>Pasangan Cocok: ${matched.length/2}/8 | Gerakan: ${moves}</p>
+                </div>
+                <div class="memory-grid">
+                    ${emojis.map((emoji, idx) => `
+                        <div class="memory-card ${matched.includes(idx) ? 'matched' : flipped.includes(idx) ? 'flipped' : ''}" 
+                             onclick="flipCard(${idx})"
+                             data-index="${idx}">
+                            ${matched.includes(idx) || flipped.includes(idx) ? emoji : '?'}
+                        </div>
+                    `).join('')}
+                </div>
+                ${matched.length === emojis.length ? '<h3 style="text-align: center; color: green; margin-top: 20px;">Selamat! Anda menyelesaikan game!</h3>' : ''}
+                <button class="next-btn" onclick="backToMenu()">Kembali ke Menu</button>
+            `;
+        }
+
+        function flipCard(idx) {
+            if (flipped.includes(idx) || matched.includes(idx) || flipped.length === 2) return;
+            
+            const cardElement = document.querySelector(`.memory-card[data-index="${idx}"]`);
+            if (!cardElement) return;
+
+            flipped.push(idx);
+            
+            if (flipped.length === 2) {
+                moves++;
+                const [idx1, idx2] = flipped;
+
+                if (emojis[idx1] === emojis[idx2]) {
+                    // Cocok
+                    matched.push(idx1, idx2);
+                    flipped = [];
+                } else {
+                    // Tidak Cocok
+                    setTimeout(() => {
+                        flipped = []; 
+                        renderMemoryGame();
+                    }, 1000);
+                }
+            }
+            renderMemoryGame();
+        }
+
+    </script>
+</body>
+</html>
